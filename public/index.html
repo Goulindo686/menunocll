@@ -334,6 +334,7 @@
         // Pega o username diretamente da URL (ex: /seu_usuario)
         const username = window.location.pathname.substring(1);
         const API_BASE = window.location.origin;
+        let lastUserActionTime = 0; // Para evitar que o sync reverta o botão logo após o clique
 
         if (!username) {
             document.body.innerHTML = "<h2 style='padding: 50px; text-align: center;'>Por favor, use o link correto do seu menu!<br>(ex: link.com/seu_usuario)</h2>";
@@ -352,6 +353,10 @@
         }
 
         async function fetchConfig() {
+            // Se o usuário clicou em algo nos últimos 4 segundos, não atualiza os switches
+            // para evitar o efeito de "vai e vem" enquanto o PC processa.
+            if (Date.now() - lastUserActionTime < 4000) return;
+
             try {
                 const res = await fetch(`${API_BASE}/api/state/${username}`);
                 const data = await res.json();
@@ -381,6 +386,8 @@
         }
 
         async function toggleFeature(category, feature, value) {
+            lastUserActionTime = Date.now(); // Bloqueia o sync por 4 segundos
+            
             try {
                 await fetch(`${API_BASE}/api/toggle`, {
                     method: 'POST',

@@ -46,6 +46,11 @@ app.post('/api/toggle', (req, res) => {
     const { username, category, feature, value } = req.body;
     if (!userCommands[username]) userCommands[username] = [];
     
+    // Atualiza o estado local IMEDIATAMENTE para o celular não ver o valor antigo
+    if (!userStates[username]) userStates[username] = {};
+    if (!userStates[username][category]) userStates[username][category] = {};
+    userStates[username][category][feature] = value;
+
     // Adiciona à lista de comandos pendentes que o PC vai buscar
     userCommands[username].push({ category, feature, value });
     res.json({ status: 'queued' });
