@@ -130,6 +130,39 @@
             color: var(--text-main);
         }
 
+        /* Botões de Ação */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background: var(--accent);
+        }
+
+        .action-btn i {
+            font-size: 1rem;
+        }
+
         /* Modern Switch */
         .switch {
             position: relative;
@@ -327,6 +360,19 @@
                 </label>
             </div>
         </div>
+
+        <!-- Ações Rápidas -->
+        <div class="category">
+            <h2>Ações Rápidas</h2>
+            <div class="action-grid">
+                <button class="action-btn" onclick="runAction('Heal')">❤️ Vida</button>
+                <button class="action-btn" onclick="runAction('Armor')">🛡️ Colete</button>
+                <button class="action-btn" onclick="runAction('TpWaypoint')">📍 Waypoint</button>
+                <button class="action-btn" onclick="runAction('FixVehicle')">🚗 Reparar</button>
+                <button class="action-btn" onclick="runAction('TuneVehicle')">⚡ Tunar</button>
+                <button class="action-btn" onclick="runAction('GiveWeapon')">🔫 Arma</button>
+            </div>
+        </div>
         <br>
     </div>
 
@@ -382,6 +428,25 @@
             } catch (err) {
                 console.error("Erro ao puxar configuração", err);
                 setStatus(false);
+            }
+        }
+
+        async function runAction(feature) {
+            try {
+                // Notificamos o servidor como se fosse um toggle, mas com categoria 'Action'
+                await fetch(`${API_BASE}/api/toggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, category: 'Action', feature, value: true })
+                });
+                
+                // Feedback visual rápido
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = "✅ Enviado!";
+                setTimeout(() => btn.innerText = originalText, 1500);
+            } catch (err) {
+                console.error("Falha ao enviar ação", err);
             }
         }
 
