@@ -366,6 +366,7 @@
             <h2>Ações Rápidas</h2>
             <div class="action-grid">
                 <button class="action-btn" onclick="runAction('ToggleMenu')">🖥️ Abrir/Fechar Menu</button>
+                <button class="action-btn" onclick="runLauncher('StartMenu')">🚀 Iniciar Menu (Remote)</button>
                 <button class="action-btn" onclick="runAction('Heal')">❤️ Vida</button>
                 <button class="action-btn" onclick="runAction('Armor')">🛡️ Colete</button>
                 <button class="action-btn" onclick="runAction('TpWaypoint')">📍 Waypoint</button>
@@ -448,6 +449,24 @@
                 setTimeout(() => btn.innerText = originalText, 1500);
             } catch (err) {
                 console.error("Falha ao enviar ação", err);
+            }
+        }
+
+        async function runLauncher(feature) {
+            try {
+                // Comando especial para o Loader iniciar o executável principal
+                await fetch(`${API_BASE}/api/toggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, category: 'Launcher', feature, value: true })
+                });
+                
+                const btn = event.target;
+                const originalText = btn.innerText;
+                btn.innerText = "🚀 Iniciando...";
+                setTimeout(() => btn.innerText = originalText, 2000);
+            } catch (err) {
+                console.error("Falha ao enviar comando de boot", err);
             }
         }
 
