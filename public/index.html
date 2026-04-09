@@ -3,492 +3,695 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOU MENU | WEB CONTROL</title>
+    <title>M4ster's Menu | WEB</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #0a0a0c;
-            --panel-bg: rgba(20, 20, 25, 0.7);
-            --accent: #5e17eb; /* Roxo vibrante */
-            --accent-glow: rgba(94, 23, 235, 0.5);
+            --panel-bg: rgba(20, 20, 25, 0.85);
+            --accent: #3f48cc;
+            --accent-glow: rgba(63, 72, 204, 0.5);
             --text-main: #f0f0f5;
             --text-muted: #8a8a99;
-            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255,255,255,0.07);
+            --sidebar-w: 260px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Montserrat',sans-serif; -webkit-tap-highlight-color:transparent; }
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% -20%, #1a1f6e 0%, var(--bg-dark) 60%);
+        }
+
+        /* OVERLAY */
+        #overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 200;
+            backdrop-filter: blur(2px);
+        }
+        #overlay.open { display: block; }
+
+        /* SIDEBAR */
+        #sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-w);
+            height: 100%;
+            background: rgba(12,12,18,0.97);
+            border-right: 1px solid var(--glass-border);
+            z-index: 300;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
             display: flex;
             flex-direction: column;
-            background-image: radial-gradient(circle at 50% -20%, #2a105f 0%, var(--bg-dark) 60%);
+            overflow: hidden;
         }
+        #sidebar.open { transform: translateX(0); }
 
-        header {
-            padding: 25px 20px;
-            text-align: center;
+        .sidebar-header {
+            padding: 24px 20px 16px;
             border-bottom: 1px solid var(--glass-border);
-            background: rgba(10, 10, 12, 0.8);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-header span {
+            font-weight: 800;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar-close {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 1.4rem; cursor: pointer; line-height: 1;
         }
 
-        header h1 {
-            font-weight: 800;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 0; }
+        .sidebar-nav::-webkit-scrollbar { width: 4px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 13px 20px;
+            cursor: pointer;
+            font-size: 0.9rem; font-weight: 600;
+            color: var(--text-muted);
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .nav-item:hover { color: var(--text-main); background: rgba(255,255,255,0.04); }
+        .nav-item.active {
+            color: #fff;
+            border-left-color: var(--accent);
+            background: rgba(63,72,204,0.12);
+        }
+        .nav-item .nav-icon { font-size: 1.1rem; width: 22px; text-align: center; }
+
+        /* HEADER */
+        header {
+            padding: 18px 20px;
+            display: flex; align-items: center; gap: 14px;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(10,10,12,0.9);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+        }
+        .hamburger {
+            background: none; border: none; cursor: pointer;
+            display: flex; flex-direction: column; gap: 5px; padding: 4px;
+        }
+        .hamburger span {
+            display: block; width: 22px; height: 2px;
+            background: var(--text-main); border-radius: 2px;
+            transition: 0.3s;
+        }
+        .header-title {
+            flex: 1;
+            font-weight: 800; font-size: 1.2rem; letter-spacing: 2px;
             text-transform: uppercase;
             background: linear-gradient(90deg, #fff, var(--accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 10px var(--accent-glow);
         }
-
-        header p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 5px;
-            font-weight: 600;
+        .header-status {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.75rem; color: var(--text-muted); font-weight: 600;
         }
-
-        .container {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #ff3b30; box-shadow: 0 0 8px #ff3b30; transition: 0.3s;
         }
+        .status-dot.connected { background: #34c759; box-shadow: 0 0 8px #34c759; }
 
+        /* TABS */
+        .tab-page { display: none; padding: 20px; flex-direction: column; gap: 16px; }
+        .tab-page.active { display: flex; }
+
+        /* CATEGORY CARD */
         .category {
             background: var(--panel-bg);
             border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-radius: 16px; padding: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
             backdrop-filter: blur(12px);
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            opacity: 0;
-            transform: translateY(20px);
+            animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1) forwards;
+            opacity: 0; transform: translateY(16px);
         }
-
-        .category:nth-child(1) { animation-delay: 0.1s; }
-        .category:nth-child(2) { animation-delay: 0.2s; }
-        .category:nth-child(3) { animation-delay: 0.3s; }
-
-        @keyframes slideUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { to { opacity:1; transform:translateY(0); } }
 
         .category h2 {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1rem; margin-bottom: 16px; color: #fff;
+            display: flex; align-items: center; gap: 10px;
         }
-
         .category h2::before {
-            content: '';
-            display: block;
-            width: 4px;
-            height: 18px;
-            background: var(--accent);
-            border-radius: 2px;
+            content: ''; display: block; width: 4px; height: 16px;
+            background: var(--accent); border-radius: 2px;
             box-shadow: 0 0 8px var(--accent-glow);
         }
 
+        /* TOGGLE ROW */
         .toggle-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 11px 0;
             border-bottom: 1px solid rgba(255,255,255,0.03);
         }
+        .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+        .toggle-row span { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
 
-        .toggle-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .toggle-row span {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-
-        /* Botões de Ação */
-        .action-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .action-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: #fff;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .action-btn:active {
-            transform: scale(0.95);
-            background: var(--accent);
-        }
-
-        .action-btn i {
-            font-size: 1rem;
-        }
-
-        /* Modern Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 28px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+        .switch input { opacity:0; width:0; height:0; }
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255,255,255,0.1);
-            transition: .4s;
-            border-radius: 34px;
-            border: 1px solid rgba(255,255,255,0.05);
+            position: absolute; cursor: pointer; inset: 0;
+            background: rgba(255,255,255,0.1); transition: .4s;
+            border-radius: 34px; border: 1px solid rgba(255,255,255,0.05);
         }
-
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 4px;
-            bottom: 3px;
-            background-color: var(--text-muted);
-            transition: .4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 4px; bottom: 3px;
+            background: var(--text-muted);
+            transition: .4s cubic-bezier(0.68,-0.55,0.265,1.55);
             border-radius: 50%;
         }
+        input:checked + .slider { background: var(--accent); box-shadow: 0 0 10px var(--accent-glow); border-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(20px); background: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.8); }
 
-        input:checked + .slider {
-            background-color: var(--accent);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 10px var(--accent-glow);
-            border-color: var(--accent);
+        /* ACTION GRID */
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .action-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: #fff; padding: 12px 8px;
+            border-radius: 12px; font-weight: 600; font-size: 0.82rem;
+            cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
+        .action-btn:active { transform: scale(0.95); background: var(--accent); }
 
-        input:checked + .slider:before {
-            transform: translateX(20px);
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        /* SECTION LABEL */
+        .section-label {
+            font-size: 0.72rem; font-weight: 600; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--text-muted);
+            padding: 4px 0 10px;
         }
-
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: #ff3b30;
-            border-radius: 50%;
-            margin-right: 5px;
-            box-shadow: 0 0 8px #ff3b30;
-            transition: 0.3s;
-        }
-
-        .status-dot.connected {
-            background-color: #34c759;
-            box-shadow: 0 0 8px #34c759;
-        }
-
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>GOU MENU</h1>
-        <p><span class="status-dot" id="dotStatus"></span><span id="txtStatus">Conectando ao PC...</span></p>
-    </header>
+<!-- Overlay -->
+<div id="overlay" onclick="closeSidebar()"></div>
 
-    <div class="container">
-        
-        <!-- Aimbot -->
-        <div class="category">
-            <h2>Combat</h2>
-            <div class="toggle-row">
-                <span>Ativar Aimbot</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Aimbot', 'Enabled', this.checked)" id="Aimbot_Enabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Mostrar FOV</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Aimbot', 'ShowFov', this.checked)" id="Aimbot_ShowFov">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Predição</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Aimbot', 'Prediction', this.checked)" id="Aimbot_Prediction">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- ESP -->
-        <div class="category">
-            <h2>Visuals</h2>
-            <div class="toggle-row">
-                <span>Ativar ESP</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('ESP', 'Enabled', this.checked)" id="ESP_Enabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Caixa 2D (Box)</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('ESP', 'Box', this.checked)" id="ESP_Box">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Esqueleto</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('ESP', 'Skeleton', this.checked)" id="ESP_Skeleton">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Linhas Fixas</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('ESP', 'SnapLines', this.checked)" id="ESP_SnapLines">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Círculo na Cabeça</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('ESP', 'HeadCircle', this.checked)" id="ESP_HeadCircle">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Arma na Mão</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('ESP', 'WeaponName', this.checked)" id="ESP_WeaponName">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Player -->
-        <div class="category">
-            <h2>Player Mods</h2>
-            <div class="toggle-row">
-                <span>GodMode</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Player', 'EnableGodMode', this.checked)" id="Player_EnableGodMode">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Veículo GodMode</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Player', 'VehicleGodMode', this.checked)" id="Player_VehicleGodMode">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>NoClip</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Player', 'NoClipEnabled', this.checked)" id="Player_NoClipEnabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Correr Rápido</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Player', 'FastRun', this.checked)" id="Player_FastRun">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Munição Infinita</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Player', 'InfiniteAmmoEnabled', this.checked)" id="Player_InfiniteAmmoEnabled">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Invisível</span>
-                <label class="switch">
-                    <input type="checkbox" onchange="toggleFeature('Player', 'Invisible', this.checked)" id="Player_Invisible">
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
-
-        <!-- Ações Rápidas -->
-        <div class="category">
-            <h2>Ações Rápidas</h2>
-            <div class="action-grid">
-                <button class="action-btn" onclick="runAction('ToggleMenu')">🖥️ Abrir/Fechar Menu</button>
-                <button class="action-btn" onclick="runLauncher('StartMenu')">🚀 Iniciar Menu (Remote)</button>
-                <button class="action-btn" onclick="runAction('Heal')">❤️ Vida</button>
-                <button class="action-btn" onclick="runAction('Armor')">🛡️ Colete</button>
-                <button class="action-btn" onclick="runAction('TpWaypoint')">📍 Waypoint</button>
-                <button class="action-btn" onclick="runAction('FixVehicle')">🚗 Reparar</button>
-                <button class="action-btn" onclick="runAction('TuneVehicle')">⚡ Tunar</button>
-                <button class="action-btn" onclick="runAction('GiveWeapon')">🔫 Arma</button>
-            </div>
-        </div>
-        <br>
+<!-- Sidebar -->
+<div id="sidebar">
+    <div class="sidebar-header">
+        <span>M4STER'S MENU</span>
+        <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
+    <nav class="sidebar-nav">
+        <div class="nav-item active" onclick="switchTab('jogador', this)">
+            <span class="nav-icon">🧍</span> Jogador
+        </div>
+        <div class="nav-item" onclick="switchTab('outros', this)">
+            <span class="nav-icon">⚙️</span> Outros
+        </div>
+        <div class="nav-item" onclick="switchTab('players', this)">
+            <span class="nav-icon">👥</span> Players
+        </div>
+        <div class="nav-item" onclick="switchTab('visual', this)">
+            <span class="nav-icon">👁️</span> Visual / ESP
+        </div>
+        <div class="nav-item" onclick="switchTab('armas', this)">
+            <span class="nav-icon">🔫</span> Armas
+        </div>
+        <div class="nav-item" onclick="switchTab('aimbot', this)">
+            <span class="nav-icon">🎯</span> Aimbot
+        </div>
+        <div class="nav-item" onclick="switchTab('veiculo', this)">
+            <span class="nav-icon">🚗</span> Veículo
+        </div>
+        <div class="nav-item" onclick="switchTab('veiculos', this)">
+            <span class="nav-icon">🚙</span> Veículos
+        </div>
+        <div class="nav-item" onclick="switchTab('config', this)">
+            <span class="nav-icon">🔧</span> Config
+        </div>
+        <div class="nav-item" onclick="switchTab('exploits', this)">
+            <span class="nav-icon">💥</span> Exploits
+        </div>
+        <div class="nav-item" onclick="switchTab('acoes', this)">
+            <span class="nav-icon">⚡</span> Ações Rápidas
+        </div>
+    </nav>
+</div>
 
-    <script>
-        // Pega o username diretamente da URL (ex: /seu_usuario)
-        const username = window.location.pathname.substring(1);
-        const API_BASE = window.location.origin;
-        let lastUserActionTime = 0; // Para evitar que o sync reverta o botão logo após o clique
+<!-- Header -->
+<header>
+    <button class="hamburger" onclick="openSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="header-title" id="pageTitle">Jogador</div>
+    <div class="header-status">
+        <div class="status-dot" id="dotStatus"></div>
+        <span id="txtStatus">Conectando...</span>
+    </div>
+</header>
 
-        if (!username) {
-            document.body.innerHTML = "<h2 style='padding: 50px; text-align: center;'>Por favor, use o link correto do seu menu!<br>(ex: link.com/seu_usuario)</h2>";
+<!-- ===== TAB: JOGADOR ===== -->
+<div class="tab-page active" id="tab-jogador">
+    <div class="category">
+        <h2>Funções Principais</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('Reviver')">❤️ Reviver</button>
+            <button class="action-btn" onclick="runAction('Suicidio')">💀 Suicídio</button>
+            <button class="action-btn" onclick="runAction('Heal')">🩹 Vida Cheia</button>
+            <button class="action-btn" onclick="runAction('Armor')">🛡️ Colete</button>
+            <button class="action-btn" onclick="runAction('Algemar')">⛓️ Algemar</button>
+            <button class="action-btn" onclick="runAction('Capuz')">🎭 Capuz</button>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Movimentação</h2>
+        <div class="toggle-row">
+            <span>GodMode</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','EnableGodMode',this.checked)" id="Player_EnableGodMode"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Noclip</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','NoClipEnabled',this.checked)" id="Player_NoClipEnabled"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Super Velocidade</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','FastRun',this.checked)" id="Player_FastRun"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Super Pulo</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','SuperJump',this.checked)" id="Player_SuperJump"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>FreeCam</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','FreeCam',this.checked)" id="Player_FreeCam"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Teleport Waypoint</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','TpWaypoint',this.checked)" id="Player_TpWaypoint"><span class="slider"></span></label>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Extras</h2>
+        <div class="toggle-row">
+            <span>Invisível</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','Invisible',this.checked)" id="Player_Invisible"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Super Soco</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','SuperPunch',this.checked)" id="Player_SuperPunch"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Modo Furtivo</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','Stealth',this.checked)" id="Player_Stealth"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Atravessar Paredes</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','NoClip',this.checked)" id="Player_NoClip"><span class="slider"></span></label>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: OUTROS ===== -->
+<div class="tab-page" id="tab-outros">
+    <div class="category">
+        <h2>Outros</h2>
+        <div class="toggle-row">
+            <span>Veículo GodMode</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','VehicleGodMode',this.checked)" id="Player_VehicleGodMode"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Munição Infinita</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','InfiniteAmmoEnabled',this.checked)" id="Player_InfiniteAmmoEnabled"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Sem Recarregar</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Armas','NoReload',this.checked)" id="Armas_NoReload"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>NoRecoil</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Armas','NoRecoil',this.checked)" id="Armas_NoRecoil"><span class="slider"></span></label>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Ações</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('ToggleMenu')">🖥️ Abrir Menu</button>
+            <button class="action-btn" onclick="runLauncher('StartMenu')">🚀 Iniciar Menu</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: PLAYERS ===== -->
+<div class="tab-page" id="tab-players">
+    <div class="category">
+        <h2>Ações em Jogadores</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('TeleportPlayer')">📍 Teleport Player</button>
+            <button class="action-btn" onclick="runAction('CopiarRoupa')">👕 Copiar Roupa</button>
+            <button class="action-btn" onclick="runAction('Fogos')">🎆 Fogos</button>
+            <button class="action-btn" onclick="runAction('BugarVeiculo')">🚘 Bugar Veículo</button>
+            <button class="action-btn" onclick="runAction('Taser')">⚡ Taser</button>
+            <button class="action-btn" onclick="runAction('ForcArrastar')">🤝 Forçar Arrasto</button>
+            <button class="action-btn" onclick="runAction('ComerPlayer')">😈 Comer Player</button>
+            <button class="action-btn" onclick="runAction('ObservarJogador')">🔍 Observar</button>
+            <button class="action-btn" onclick="runAction('RemoverDoCarro')">🚪 Tirar do Carro</button>
+            <button class="action-btn" onclick="runAction('AdminsProximo')">👮 Admins Próximo</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: VISUAL / ESP ===== -->
+<div class="tab-page" id="tab-visual">
+    <div class="category">
+        <h2>ESP</h2>
+        <div class="toggle-row">
+            <span>Habilitar ESP</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','Enabled',this.checked)" id="ESP_Enabled"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Box 2D</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','Box',this.checked)" id="ESP_Box"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Contorno</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','Skeleton',this.checked)" id="ESP_Skeleton"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Names</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','Names',this.checked)" id="ESP_Names"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Arma Atual</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','WeaponName',this.checked)" id="ESP_WeaponName"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Glow Players</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','Glow',this.checked)" id="ESP_Glow"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Linhas Fixas (SnapLines)</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','SnapLines',this.checked)" id="ESP_SnapLines"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Círculo na Cabeça</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('ESP','HeadCircle',this.checked)" id="ESP_HeadCircle"><span class="slider"></span></label>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: ARMAS ===== -->
+<div class="tab-page" id="tab-armas">
+    <div class="category">
+        <h2>Gerenciar Armas</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('SpawnarArma')">🔫 Spawnar Arma</button>
+            <button class="action-btn" onclick="runAction('RemoverArma')">🗑️ Remover Arma</button>
+            <button class="action-btn" onclick="runAction('AddComponentes')">🔩 Componentes</button>
+            <button class="action-btn" onclick="runAction('AddMunicao')">🔋 Munição</button>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Modificadores</h2>
+        <div class="toggle-row">
+            <span>Sem Recarregar</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Armas','NoReload',this.checked)" id="Armas_NoReload2"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>NoRecoil</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Armas','NoRecoil',this.checked)" id="Armas_NoRecoil2"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Habilitar Tab Armas</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Armas','TabEnabled',this.checked)" id="Armas_TabEnabled"><span class="slider"></span></label>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Armas Rápidas</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('GiveWeapon_FiveSeven')">🔫 Five Seven</button>
+            <button class="action-btn" onclick="runAction('GiveWeapon_CombatPistol')">🔫 Combat Pistol</button>
+            <button class="action-btn" onclick="runAction('GiveWeapon_G36')">🪖 G36</button>
+            <button class="action-btn" onclick="runAction('GiveWeapon_RPG')">💣 RPG</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: AIMBOT ===== -->
+<div class="tab-page" id="tab-aimbot">
+    <div class="category">
+        <h2>Aimbot</h2>
+        <div class="toggle-row">
+            <span>Ativar Aimbot</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Aimbot','Enabled',this.checked)" id="Aimbot_Enabled"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Mostrar FOV</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Aimbot','ShowFov',this.checked)" id="Aimbot_ShowFov"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Predição</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Aimbot','Prediction',this.checked)" id="Aimbot_Prediction"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Silent Aim</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Aimbot','SilentAim',this.checked)" id="Aimbot_SilentAim"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Auto Shoot</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Aimbot','AutoShoot',this.checked)" id="Aimbot_AutoShoot"><span class="slider"></span></label>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: VEICULO ===== -->
+<div class="tab-page" id="tab-veiculo">
+    <div class="category">
+        <h2>Veículo Atual</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('FixVehicle')">🔧 Reparar</button>
+            <button class="action-btn" onclick="runAction('TuneVehicle')">⚡ Tunar</button>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Modificadores</h2>
+        <div class="toggle-row">
+            <span>Veículo GodMode</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Player','VehicleGodMode',this.checked)" id="Veiculo_GodMode"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>No Ragdoll</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Veiculo','NoRagdoll',this.checked)" id="Veiculo_NoRagdoll"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Freio de Avião</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Veiculo','PlaneBreak',this.checked)" id="Veiculo_PlaneBreak"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Boost Buzina</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Veiculo','BoostBuzina',this.checked)" id="Veiculo_BoostBuzina"><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+            <span>Grudar no Chão</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Veiculo','GrudarChao',this.checked)" id="Veiculo_GrudarChao"><span class="slider"></span></label>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: VEICULOS ===== -->
+<div class="tab-page" id="tab-veiculos">
+    <div class="category">
+        <h2>Gerenciar Veículos</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('PuxarVeiculo')">🧲 Puxar Veículo</button>
+            <button class="action-btn" onclick="runAction('DeletarVeiculo')">🗑️ Deletar Veículo</button>
+            <button class="action-btn" onclick="runAction('TrancarVeiculos')">🔒 Trancar Todos</button>
+            <button class="action-btn" onclick="runAction('DestrancarVeiculos')">🔓 Destrancar Todos</button>
+            <button class="action-btn" onclick="runAction('TeleportarVeiculo')">📍 Teleport no Veículo</button>
+            <button class="action-btn" onclick="runAction('ExplodirVeiculo')">💥 Explodir Veículo</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: CONFIG ===== -->
+<div class="tab-page" id="tab-config">
+    <div class="category">
+        <h2>Configurações</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('Desinjetar')">🚫 Desinjetar</button>
+            <button class="action-btn" onclick="runAction('ResetarBinds')">🔄 Resetar Binds</button>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Menu</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('ToggleMenu')">🖥️ Abrir/Fechar Menu</button>
+            <button class="action-btn" onclick="runLauncher('StartMenu')">🚀 Iniciar Menu</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: EXPLOITS ===== -->
+<div class="tab-page" id="tab-exploits">
+    <div class="category">
+        <h2>Exploits</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('PegarVeiculo')">🚗 Pegar Veículo</button>
+            <button class="action-btn" onclick="runAction('AutoFarm')">🌾 Auto Farm</button>
+        </div>
+    </div>
+    <div class="category">
+        <h2>Physic Gun</h2>
+        <div class="toggle-row">
+            <span>Ativar Physic Gun</span>
+            <label class="switch"><input type="checkbox" onchange="toggleFeature('Exploits','PhysicGun',this.checked)" id="Exploits_PhysicGun"><span class="slider"></span></label>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TAB: AÇÕES RÁPIDAS ===== -->
+<div class="tab-page" id="tab-acoes">
+    <div class="category">
+        <h2>Ações Rápidas</h2>
+        <div class="action-grid">
+            <button class="action-btn" onclick="runAction('Heal')">❤️ Vida</button>
+            <button class="action-btn" onclick="runAction('Armor')">🛡️ Colete</button>
+            <button class="action-btn" onclick="runAction('TpWaypoint')">📍 Waypoint</button>
+            <button class="action-btn" onclick="runAction('FixVehicle')">🚗 Reparar</button>
+            <button class="action-btn" onclick="runAction('TuneVehicle')">⚡ Tunar</button>
+            <button class="action-btn" onclick="runAction('GiveWeapon')">🔫 Arma</button>
+            <button class="action-btn" onclick="runAction('Reviver')">💊 Reviver</button>
+            <button class="action-btn" onclick="runAction('Suicidio')">💀 Suicídio</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const username = window.location.pathname.substring(1);
+    const API_BASE = window.location.origin;
+    let lastUserActionTime = 0;
+
+    if (!username) {
+        document.body.innerHTML = "<h2 style='padding:50px;text-align:center;'>Use o link correto!<br>(ex: link.com/seu_usuario)</h2>";
+    }
+
+    // Sidebar
+    function openSidebar() {
+        document.getElementById('sidebar').classList.add('open');
+        document.getElementById('overlay').classList.add('open');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('overlay').classList.remove('open');
+    }
+
+    // Tab switching
+    const tabTitles = {
+        jogador: 'Jogador', outros: 'Outros', players: 'Players',
+        visual: 'Visual / ESP', armas: 'Armas', aimbot: 'Aimbot',
+        veiculo: 'Veículo', veiculos: 'Veículos', config: 'Config',
+        exploits: 'Exploits', acoes: 'Ações Rápidas'
+    };
+
+    function switchTab(tabId, navEl) {
+        document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const page = document.getElementById('tab-' + tabId);
+        if (page) {
+            page.classList.add('active');
+            // Re-trigger animation
+            page.querySelectorAll('.category').forEach((c, i) => {
+                c.style.animation = 'none';
+                c.offsetHeight;
+                c.style.animation = `slideUp 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 0.07}s forwards`;
+            });
         }
+        if (navEl) navEl.classList.add('active');
+        document.getElementById('pageTitle').textContent = tabTitles[tabId] || tabId;
+        closeSidebar();
+    }
 
-        function setStatus(connected) {
-            const dot = document.getElementById('dotStatus');
-            const txt = document.getElementById('txtStatus');
-            if (connected) {
-                dot.classList.add('connected');
-                txt.innerText = `Sincronizado: ${username}`;
-            } else {
-                dot.classList.remove('connected');
-                txt.innerText = 'Buscando PC...';
-            }
-        }
+    // Status
+    function setStatus(connected) {
+        const dot = document.getElementById('dotStatus');
+        const txt = document.getElementById('txtStatus');
+        dot.classList.toggle('connected', connected);
+        txt.innerText = connected ? username : 'Buscando PC...';
+    }
 
-        async function fetchConfig() {
-            // Se o usuário clicou em algo nos últimos 4 segundos, não atualiza os switches
-            // para evitar o efeito de "vai e vem" enquanto o PC processa.
-            if (Date.now() - lastUserActionTime < 4000) return;
-
-            try {
-                const res = await fetch(`${API_BASE}/api/state/${username}`);
-                const data = await res.json();
-                
-                if (Object.keys(data).length === 0) {
-                    setStatus(false);
-                    return;
-                }
-
-                // Update toggles based on server state
-                const iterateObj = (obj, parentKey) => {
-                    for (const key in obj) {
-                        if (typeof obj[key] === 'object') {
-                            iterateObj(obj[key], key);
-                        } else {
-                            const domElement = document.getElementById(`${parentKey}_${key}`);
-                            if (domElement) domElement.checked = obj[key];
-                        }
+    // Sync state
+    async function fetchConfig() {
+        if (Date.now() - lastUserActionTime < 4000) return;
+        try {
+            const res = await fetch(`${API_BASE}/api/state/${username}`);
+            const data = await res.json();
+            if (!Object.keys(data).length) { setStatus(false); return; }
+            const iterate = (obj, parent) => {
+                for (const key in obj) {
+                    if (typeof obj[key] === 'object') iterate(obj[key], key);
+                    else {
+                        const el = document.getElementById(`${parent}_${key}`);
+                        if (el) el.checked = obj[key];
                     }
-                };
-                iterateObj(data, "");
-                setStatus(true);
-            } catch (err) {
-                console.error("Erro ao puxar configuração", err);
-                setStatus(false);
-            }
-        }
+                }
+            };
+            iterate(data, '');
+            setStatus(true);
+        } catch { setStatus(false); }
+    }
 
-        async function runAction(feature) {
-            try {
-                // Notificamos o servidor como se fosse um toggle, mas com categoria 'Action'
-                await fetch(`${API_BASE}/api/toggle`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, category: 'Action', feature, value: true })
-                });
-                
-                // Feedback visual rápido
-                const btn = event.target;
-                const originalText = btn.innerText;
-                btn.innerText = "✅ Enviado!";
-                setTimeout(() => btn.innerText = originalText, 1500);
-            } catch (err) {
-                console.error("Falha ao enviar ação", err);
-            }
-        }
+    async function toggleFeature(category, feature, value) {
+        lastUserActionTime = Date.now();
+        try {
+            await fetch(`${API_BASE}/api/toggle`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, category, feature, value })
+            });
+        } catch (e) { console.error(e); }
+    }
 
-        async function runLauncher(feature) {
-            try {
-                // Comando especial para o Loader iniciar o executável principal
-                await fetch(`${API_BASE}/api/toggle`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, category: 'Launcher', feature, value: true })
-                });
-                
-                const btn = event.target;
-                const originalText = btn.innerText;
-                btn.innerText = "🚀 Iniciando...";
-                setTimeout(() => btn.innerText = originalText, 2000);
-            } catch (err) {
-                console.error("Falha ao enviar comando de boot", err);
-            }
-        }
+    async function runAction(feature) {
+        try {
+            await fetch(`${API_BASE}/api/toggle`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, category: 'Action', feature, value: true })
+            });
+            const btn = event.currentTarget;
+            const orig = btn.innerText;
+            btn.innerText = '✅ Enviado!';
+            setTimeout(() => btn.innerText = orig, 1500);
+        } catch (e) { console.error(e); }
+    }
 
-        async function toggleFeature(category, feature, value) {
-            lastUserActionTime = Date.now(); // Bloqueia o sync por 4 segundos
-            
-            try {
-                await fetch(`${API_BASE}/api/toggle`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, category, feature, value })
-                });
-            } catch (err) {
-                console.error("Falha ao enviar comando", err);
-            }
-        }
+    async function runLauncher(feature) {
+        try {
+            await fetch(`${API_BASE}/api/toggle`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, category: 'Launcher', feature, value: true })
+            });
+            const btn = event.currentTarget;
+            const orig = btn.innerText;
+            btn.innerText = '🚀 Iniciando...';
+            setTimeout(() => btn.innerText = orig, 2000);
+        } catch (e) { console.error(e); }
+    }
 
-        // Fetch config once on load, and then every 2 seconds to keep in sync
-        window.onload = () => {
-            fetchConfig();
-            setInterval(fetchConfig, 2000);
-        };
-    </script>
+    window.onload = () => { fetchConfig(); setInterval(fetchConfig, 2000); };
+</script>
 </body>
 </html>
