@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOU MENU | WEB CONTROL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --panel-bg: rgba(20, 20, 25, 0.7);
+            --accent: #5e17eb; /* Roxo vibrante */
+            --accent-glow: rgba(94, 23, 235, 0.5);
+            --text-main: #f0f0f5;
+            --text-muted: #8a8a99;
+            --glass-border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at 50% -20%, #2a105f 0%, var(--bg-dark) 60%);
+        }
+
+        header {
+            padding: 25px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(10, 10, 12, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .category {
+            background: var(--panel-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(12px);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .category:nth-child(1) { animation-delay: 0.1s; }
+        .category:nth-child(2) { animation-delay: 0.2s; }
+        .category:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category h2 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 18px;
+            background: var(--accent);
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .toggle-row span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Modern Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--text-muted);
+            transition: .4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5), 0 0 10px var(--accent-glow);
+            border-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ff3b30;
+            border-radius: 50%;
+            margin-right: 5px;
+            box-shadow: 0 0 8px #ff3b30;
+            transition: 0.3s;
+        }
+
+        .status-dot.connected {
+            background-color: #34c759;
+            box-shadow: 0 0 8px #34c759;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>GOU MENU</h1>
+        <p><span class="status-dot" id="dotStatus"></span><span id="txtStatus">Conectando ao PC...</span></p>
+    </header>
+
+    <div class="container">
+        
+        <!-- Aimbot -->
+        <div class="category">
+            <h2>Combat</h2>
+            <div class="toggle-row">
+                <span>Ativar Aimbot</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Aimbot', 'Enabled', this.checked)" id="Aimbot_Enabled">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Mostrar FOV</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Aimbot', 'ShowFov', this.checked)" id="Aimbot_ShowFov">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Predição</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Aimbot', 'Prediction', this.checked)" id="Aimbot_Prediction">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- ESP -->
+        <div class="category">
+            <h2>Visuals</h2>
+            <div class="toggle-row">
+                <span>Ativar ESP</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('ESP', 'Enabled', this.checked)" id="ESP_Enabled">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Caixa 2D (Box)</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('ESP', 'Box', this.checked)" id="ESP_Box">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Esqueleto</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('ESP', 'Skeleton', this.checked)" id="ESP_Skeleton">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Linhas Fixas</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('ESP', 'SnapLines', this.checked)" id="ESP_SnapLines">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Círculo na Cabeça</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('ESP', 'HeadCircle', this.checked)" id="ESP_HeadCircle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Arma na Mão</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('ESP', 'WeaponName', this.checked)" id="ESP_WeaponName">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Player -->
+        <div class="category">
+            <h2>Player Mods</h2>
+            <div class="toggle-row">
+                <span>GodMode</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Player', 'EnableGodMode', this.checked)" id="Player_EnableGodMode">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Veículo GodMode</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Player', 'VehicleGodMode', this.checked)" id="Player_VehicleGodMode">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>NoClip</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Player', 'NoClipEnabled', this.checked)" id="Player_NoClipEnabled">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Correr Rápido</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Player', 'FastRun', this.checked)" id="Player_FastRun">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Munição Infinita</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Player', 'InfiniteAmmoEnabled', this.checked)" id="Player_InfiniteAmmoEnabled">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="toggle-row">
+                <span>Invisível</span>
+                <label class="switch">
+                    <input type="checkbox" onchange="toggleFeature('Player', 'Invisible', this.checked)" id="Player_Invisible">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <script>
+        // Pega o username diretamente da URL (ex: /seu_usuario)
+        const username = window.location.pathname.substring(1);
+        const API_BASE = window.location.origin;
+
+        if (!username) {
+            document.body.innerHTML = "<h2 style='padding: 50px; text-align: center;'>Por favor, use o link correto do seu menu!<br>(ex: link.com/seu_usuario)</h2>";
+        }
+
+        function setStatus(connected) {
+            const dot = document.getElementById('dotStatus');
+            const txt = document.getElementById('txtStatus');
+            if (connected) {
+                dot.classList.add('connected');
+                txt.innerText = `Sincronizado: ${username}`;
+            } else {
+                dot.classList.remove('connected');
+                txt.innerText = 'Buscando PC...';
+            }
+        }
+
+        async function fetchConfig() {
+            try {
+                const res = await fetch(`${API_BASE}/api/state/${username}`);
+                const data = await res.json();
+                
+                if (Object.keys(data).length === 0) {
+                    setStatus(false);
+                    return;
+                }
+
+                // Update toggles based on server state
+                const iterateObj = (obj, parentKey) => {
+                    for (const key in obj) {
+                        if (typeof obj[key] === 'object') {
+                            iterateObj(obj[key], key);
+                        } else {
+                            const domElement = document.getElementById(`${parentKey}_${key}`);
+                            if (domElement) domElement.checked = obj[key];
+                        }
+                    }
+                };
+                iterateObj(data, "");
+                setStatus(true);
+            } catch (err) {
+                console.error("Erro ao puxar configuração", err);
+                setStatus(false);
+            }
+        }
+
+        async function toggleFeature(category, feature, value) {
+            try {
+                await fetch(`${API_BASE}/api/toggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, category, feature, value })
+                });
+            } catch (err) {
+                console.error("Falha ao enviar comando", err);
+            }
+        }
+
+        // Fetch config once on load, and then every 2 seconds to keep in sync
+        window.onload = () => {
+            fetchConfig();
+            setInterval(fetchConfig, 2000);
+        };
+    </script>
+</body>
+</html>
