@@ -1,621 +1,637 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GOU MENU | PREMIUM WEB</title>
+    <title>GOU MENU | Mobile Remote</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #050507;
-            --accent: #7c4dff;
+            --bg-color: #050507;
+            --accent-color: #7c4dff;
             --accent-glow: rgba(124, 77, 255, 0.4);
-            --panel: rgba(20, 20, 28, 0.7);
-            --border: rgba(255, 255, 255, 0.08);
-            --text: #ffffff;
-            --text-dim: #9494a3;
+            --card-bg: rgba(20, 20, 25, 0.7);
+            --text-color: #ffffff;
+            --text-dim: #a0a0a0;
             --success: #00e676;
             --danger: #ff5252;
-            --card-radius: 20px;
+            --sidebar-width: 280px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            font-family: 'Outfit', sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 10%, rgba(124, 77, 255, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(124, 77, 255, 0.05) 0%, transparent 40%);
+            background-image: radial-gradient(circle at 50% 0%, #1a103d 0%, var(--bg-color) 70%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
 
-        /* --- Header & Navigation --- */
+        /* Nav & Header */
         header {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 1000;
-            background: rgba(5, 5, 7, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .logo {
             font-weight: 800;
-            font-size: 1.4rem;
+            font-size: 22px;
             letter-spacing: 1px;
-            background: linear-gradient(135deg, #fff, var(--accent));
+            background: linear-gradient(90deg, #fff, var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .status-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid var(--border);
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--danger);
-            box-shadow: 0 0 10px var(--danger);
-        }
-
-        .dot.online {
-            background: var(--success);
-            box-shadow: 0 0 10px var(--success);
-        }
-
         .menu-btn {
-            font-size: 1.5rem;
             background: none;
             border: none;
-            color: var(--text);
+            color: white;
+            font-size: 24px;
             cursor: pointer;
+            padding: 10px;
         }
 
-        /* --- Side Menu --- */
+        /* Sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         .sidebar {
             position: fixed;
             top: 0;
-            right: -100%;
-            width: 80%;
+            left: calc(-1 * var(--sidebar-width));
+            width: var(--sidebar-width);
             height: 100%;
-            background: rgba(10, 10, 15, 0.95);
-            backdrop-filter: blur(30px);
-            z-index: 2000;
-            transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-            padding: 80px 30px;
-            border-left: 1px solid var(--border);
+            background: #0d0d12;
+            z-index: 201;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 80px 20px 20px;
+            border-right: 1px solid rgba(124, 77, 255, 0.2);
         }
 
         .sidebar.active {
-            right: 0;
+            left: 0;
+            box-shadow: 20px 0 50px rgba(0,0,0,0.5);
         }
 
-        .sidebar h3 {
-            font-size: 1.8rem;
-            margin-bottom: 40px;
+        .sidebar-item {
+            padding: 15px 20px;
+            margin-bottom: 8px;
+            border-radius: 12px;
             color: var(--text-dim);
-        }
-
-        .nav-item {
-            list-style: none;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 15px;
-            color: var(--text-dim);
-            transition: 0.3s;
         }
 
-        .nav-item.active {
-            color: var(--accent);
-            transform: translateX(10px);
+        .sidebar-item i { margin-right: 15px; font-size: 18px; }
+
+        .sidebar-item.active {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
         }
 
-        .sidebar-close {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            font-size: 1.5rem;
+        /* Main Content */
+        main {
+            padding: 90px 20px 30px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* --- Main Content --- */
-        .container {
-            padding: 20px;
-            padding-bottom: 100px;
-        }
-
-        .tab-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .tab-subtitle {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-            margin-bottom: 30px;
-        }
-
-        /* --- Sub-tabs --- */
-        .subtabs-scroll {
+        .tab-switcher {
             display: flex;
-            gap: 12px;
-            overflow-x: auto;
+            gap: 10px;
             margin-bottom: 25px;
-            padding-bottom: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
             scrollbar-width: none;
         }
-
-        .subtabs-scroll::-webkit-scrollbar { display: none; }
+        .tab-switcher::-webkit-scrollbar { display: none; }
 
         .subtab-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
             padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            border-radius: 20px;
             color: var(--text-dim);
-            font-weight: 600;
             white-space: nowrap;
-            transition: 0.3s;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .subtab-btn.active {
-            background: var(--accent);
-            color: #fff;
-            border-color: var(--accent);
-            box-shadow: 0 5px 15px var(--accent-glow);
+            background: rgba(124, 77, 255, 0.1);
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
-        /* --- Widgets --- */
+        /* Cards & Widgets */
         .card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--card-radius);
+            background: var(--card-bg);
+            border-radius: 20px;
             padding: 20px;
             margin-bottom: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            will-change: transform, opacity;
         }
 
         .card-header {
-            font-size: 1.1rem;
+            font-size: 16px;
             font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--accent);
+            margin-bottom: 20px;
+            color: var(--accent-color);
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 10px;
         }
 
         .widget-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             padding: 15px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.02);
         }
 
         .widget-row:last-child { border-bottom: none; }
 
-        .widget-label {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+        .widget-info { flex: 1; }
+        .widget-label { font-size: 15px; font-weight: 500; }
+        .widget-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
-        .widget-label span:first-child {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .widget-label span:last-child {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-        }
-
-        /* Switch */
+        /* Controls */
         .switch {
             position: relative;
-            width: 54px;
-            height: 30px;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
         }
-
         .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-cap {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #2a2a35;
+            transition: .3s; border-radius: 24px;
+        }
+        .slider-cap:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .3s; border-radius: 50%;
+        }
+        input:checked + .slider-cap { background-color: var(--accent-color); }
+        input:checked + .slider-cap:before { transform: translateX(22px); }
 
-        .slider {
-            position: absolute;
-            inset: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            transition: .3s;
-            border-radius: 34px;
+        .slider-container { width: 100%; margin: 10px 0 5px; }
+        .range-slider {
+            width: 100%; -webkit-appearance: none;
+            background: #2a2a35; height: 6px; border-radius: 3px;
+            outline: none; margin: 15px 0;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 18px; height: 18px;
+            background: var(--accent-color); border-radius: 50%; cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 22px;
-            width: 22px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 50%;
+        .btn-action {
+            width: 100%; padding: 12px; border-radius: 12px;
+            background: rgba(124, 77, 255, 0.1); border: 1px solid var(--accent-color);
+            color: var(--accent-color); font-weight: 600; cursor: pointer;
+            transition: all 0.2s; margin-top: 5px;
         }
+        .btn-action:active { transform: scale(0.98); background: var(--accent-color); color: white; }
 
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        /* Slider Range */
-        .range-container {
-            width: 100%;
-            margin-top: 10px;
-            padding-bottom: 5px;
+        /* Status Bar */
+        .status-bar {
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(10, 10, 15, 0.9); border-radius: 15px;
+            padding: 12px 20px; display: flex; align-items: center;
+            justify-content: space-between; border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px); z-index: 100;
         }
-
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--accent);
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            outline: none;
+        .status-info { display: flex; align-items: center; font-size: 13px; }
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            margin-right: 10px; flex-shrink: 0;
         }
+        .status-dot.online { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-dot.offline { background: var(--danger); }
+        
+        .user-tag { font-weight: 600; color: var(--accent-color); }
 
-        .range-value {
-            font-size: 0.8rem;
-            color: var(--accent);
-            font-weight: bold;
+        /* Animations */
+        @keyframes pulse { 
+            0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; }
         }
+        .syncing { animation: pulse 2s infinite; }
 
-        /* --- Footer Info --- */
-        .footer {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-dim);
-            font-size: 0.8rem;
+        #loading-overlay {
+            position: fixed; inset: 0; background: var(--bg-color);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+            transition: opacity 0.5s;
         }
-
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 1500;
-            display: none;
+        .loader {
+            width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--accent-color); border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-
-        .overlay.active { display: block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay"></div>
-
-    <aside class="sidebar" id="sidebar">
-        <button class="sidebar-close" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
-        <h3>Categorias</h3>
-        <ul id="tab-list">
-            <!-- Tabs dynamic -->
-        </ul>
-    </aside>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+    </div>
 
     <header>
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+        <button class="menu-btn" id="open-sidebar">☰</button>
         <div class="logo">GOU MENU</div>
-        <div class="status-badge">
-            <div class="dot" id="status-dot"></div>
-            <span id="status-text">Desconectado</span>
-        </div>
+        <div style="width: 44px;"></div> <!-- spacer -->
     </header>
 
-    <main class="container">
-        <h1 class="tab-title" id="current-tab-name">Assistência</h1>
-        <p class="tab-subtitle">Configurações de ajuda de mira</p>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div id="sidebar-items">
+            <!-- Dynamic Side Tabs -->
+        </div>
+    </div>
 
-        <div class="subtabs-scroll" id="sub-tabs-container">
-            <!-- Subtabs dynamic -->
+    <main>
+        <div class="tab-switcher" id="subtab-container">
+            <!-- Dynamic Sub Tabs -->
         </div>
 
-        <div id="widgets-container">
-            <!-- Widgets will be injected here -->
-            <div style="text-align: center; padding: 50px; color: #555;">
-                <i class="fas fa-circle-notch fa-spin fa-2x"></i>
-                <p style="margin-top: 10px;">Carregando configurações...</p>
-            </div>
+        <div id="content-area">
+            <!-- Dynamic Content -->
         </div>
     </main>
 
-    <div class="footer">
-        Desenvolvido por GOU MENU &copy; 2026
+    <div class="status-bar">
+        <div class="status-info" id="status-container">
+            <div class="status-dot offline" id="status-dot"></div>
+            <span id="status-text">Desconectado</span>
+        </div>
+        <div class="user-tag" id="user-display">@USUARIO</div>
     </div>
 
     <script>
         const API_BASE = window.location.origin;
-        const username = window.location.pathname.split('/')[1] || 'UnknownUser';
+        const username = window.location.pathname.split('/').pop() || 'Unknown';
         
-        let currentTab = 0;
+        let currentTab = 'Assistência';
         let currentSubTab = 0;
         let menuSchema = null;
         let currentState = {};
-        
-        const tabsInfo = [
-            { id: 0, name: "Assistência", subtitle: "Aimbot e Gatilhos", icon: "fa-crosshairs" },
-            { id: 1, name: "Visuals", subtitle: "ESP e Visibilidade", icon: "fa-eye" },
-            { id: 2, name: "Jogador", subtitle: "Modificações do Personagem", icon: "fa-user" },
-            { id: 3, name: "Lista", subtitle: "Jogadores e Veículos", icon: "fa-list" },
-            { id: 4, name: "Mundo", subtitle: "Teleporte e Clima", icon: "fa-globe" },
-            { id: 5, name: "Recurso", subtitle: "Armas e Exploits", icon: "fa-fire" },
-            { id: 6, name: "Config", subtitle: "Sistema e Ajustes", icon: "fa-cog" }
-        ];
+        let lastWidgetValues = {}; // Para evitar flashes / redrender desnecessário
 
-        // --- UI Interactions ---
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function setStatus(online) {
-            const dot = document.getElementById('status-dot');
-            const text = document.getElementById('status-text');
-            if(online) {
-                dot.classList.add('online');
-                text.innerText = "Sincronizado";
-            } else {
-                dot.classList.remove('online');
-                text.innerText = "Desconectado";
+        // Expanded Fallback Schema (Comprehensive)
+        const fallbackSchema = {
+            "Assistência": {
+                subs: ["Aimbot", "Silent Aim", "Triggerbot", "Armas"],
+                groups: [
+                    [
+                        { id: "Aimbot_Enabled", label: "Ativar Aimbot", type: "toggle", cat: "Aimbot", feat: "Enabled" },
+                        { id: "Aimbot_ShowFov", label: "Mostrar FOV", type: "toggle", cat: "Aimbot", feat: "ShowFov" },
+                        { id: "Aimbot_FOVX", label: "FOV Horizontal", type: "slider", min: 0, max: 800, cat: "Aimbot", feat: "FOVX" },
+                        { id: "Aimbot_FOVY", label: "FOV Vertical", type: "slider", min: 0, max: 800, cat: "Aimbot", feat: "FOVY" },
+                        { id: "Aimbot_AimbotSpeed", label: "Velocidade (Suavização)", type: "slider", min: 0, max: 12, cat: "Aimbot", feat: "AimbotSpeed" }
+                    ],
+                    [
+                        { id: "SilentAim_Enabled", label: "Ativar Silent Aim", type: "toggle", cat: "SilentAim", feat: "Enabled" },
+                        { id: "SilentAim_MagicBullets", label: "Balas Mágicas", type: "toggle", cat: "SilentAim", feat: "MagicBullets" },
+                        { id: "SilentAim_FOVX", label: "FOV Silent", type: "slider", min: 0, max: 400, cat: "SilentAim", feat: "FOVX" }
+                    ],
+                    [
+                        { id: "TriggerBot_Enabled", label: "Ativar Triggerbot", type: "toggle", cat: "TriggerBot", feat: "Enabled" },
+                        { id: "TriggerBot_Delay", label: "Atraso (ms)", type: "slider", min: 0, max: 50, cat: "TriggerBot", feat: "Delay" }
+                    ],
+                    [
+                        { id: "Player_NoRecoilEnabled", label: "Sem Recuo", type: "toggle", cat: "Player", feat: "NoRecoilEnabled" },
+                        { id: "Player_NoSpreadEnabled", label: "Sem Dispersão", type: "toggle", cat: "Player", feat: "NoSpreadEnabled" },
+                        { id: "Player_InfiniteAmmoEnabled", label: "Munição Infinita", type: "toggle", cat: "Player", feat: "InfiniteAmmoEnabled" }
+                    ]
+                ]
+            },
+            "Visuals": {
+                subs: ["Jogadores", "Veículos", "Outros"],
+                groups: [
+                    [
+                        { id: "ESP_Enabled", label: "Ativar ESP", type: "toggle", cat: "ESP", feat: "Enabled" },
+                        { id: "ESP_Box", label: "Caixas", type: "toggle", cat: "ESP", feat: "Box" },
+                        { id: "ESP_Skeleton", label: "Esqueleto", type: "toggle", cat: "ESP", feat: "Skeleton" },
+                        { id: "ESP_UserNames", label: "Nomes", type: "toggle", cat: "ESP", feat: "UserNames" },
+                        { id: "ESP_HealthBar", label: "Barra de Vida", type: "toggle", cat: "ESP", feat: "HealthBar" },
+                        { id: "ESP_MaxDistance", label: "Distância Máxima", type: "slider", min: 0, max: 1000, cat: "ESP", feat: "MaxDistance" }
+                    ],
+                    [
+                        { id: "VehicleESP_Enabled", label: "ESP Veículos", type: "toggle", cat: "VehicleESP", feat: "Enabled" },
+                        { id: "VehicleESP_VehName", label: "Nome do Veículo", type: "toggle", cat: "VehicleESP", feat: "VehName" }
+                    ],
+                    [
+                        { id: "SpectatorESP_Enabled", label: "ESP Espectador", type: "toggle", cat: "SpectatorESP", feat: "Enabled" }
+                    ]
+                ]
+            },
+            "Jogador": {
+                subs: ["PvP", "Exploits", "Misc"],
+                groups: [
+                    [
+                        { id: "Player_EnableGodMode", label: "Modo Deus", type: "toggle", cat: "Player", feat: "EnableGodMode" },
+                        { id: "Player_NoClipEnabled", label: "NoClip", type: "toggle", cat: "Player", feat: "NoClipEnabled" },
+                        { id: "Action_Heal", label: "Curar Totalmente", type: "button", feat: "Heal" },
+                        { id: "Action_Armor", label: "Reparar Colete", type: "button", feat: "Armor" },
+                        { id: "Player_FastRun", label: "Corrida Rápida", type: "toggle", cat: "Player", feat: "FastRun" },
+                        { id: "Player_InfiniteStamina", label: "Stamina Infinita", type: "toggle", cat: "Player", feat: "InfiniteStamina" }
+                    ],
+                    [
+                        { id: "Player_PhysicGunEnabled", label: "Physic Gun (E)", type: "toggle", cat: "Player", feat: "PhysicGunEnabled" },
+                        { id: "Player_ExplosiveMelee", label: "Soco Explosivo", type: "toggle", cat: "Player", feat: "ExplosiveMelee" },
+                        { id: "Player_SuperJump", label: "Super Pulo", type: "toggle", cat: "Player", feat: "SuperJump" }
+                    ],
+                    [
+                        { id: "Player_ChangeFov", label: "Alterar FOV", type: "toggle", cat: "Player", feat: "ChangeFov" },
+                        { id: "Player_FovValue", label: "Valor do FOV", type: "slider", min: 30, max: 120, cat: "Player", feat: "FovValue" }
+                    ]
+                ]
+            },
+            "Mundo": {
+                subs: ["Veículo", "Ambiente"],
+                groups: [
+                    [
+                        { id: "Player_VehicleGodMode", label: "GodMode Veículo", type: "toggle", cat: "Player", feat: "VehicleGodMode" },
+                        { id: "Action_FixVehicle", label: "Reparar Veículo", type: "button", feat: "FixVehicle" },
+                        { id: "Action_TuneVehicle", label: "Tunar Full (LUA)", type: "button", feat: "TuneVehicle" },
+                        { id: "Player_AutoRepair", label: "Auto Reparo", type: "toggle", cat: "Player", feat: "AutoRepair" }
+                    ],
+                    [
+                        { id: "Player_ForceTime", label: "Forçar Horário", type: "toggle", cat: "Player", feat: "ForceTime" },
+                        { id: "Player_TimeToSet", label: "Hora", type: "slider", min: 0, max: 23, cat: "Player", feat: "TimeToSet" }
+                    ]
+                ]
+            },
+            "Teleporte": {
+                subs: ["Locais", "Roupas"],
+                groups: [
+                    [
+                        { id: "Action_TpWaypoint", label: "Teleportar Waypoint", type: "button", feat: "TpWaypoint" },
+                        { id: "Action_TpSea", label: "Teleportar para o Mar", type: "button", feat: "TpSea" }
+                    ],
+                    [
+                        { id: "Action_ApplyOutfit", label: "Aplicar Roupas", type: "button", feat: "ApplyOutfit" }
+                    ]
+                ]
             }
+        };
+
+        // DOM Elements
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const contentArea = document.getElementById('content-area');
+        const subtabContainer = document.getElementById('subtab-container');
+        const userDisplay = document.getElementById('user-display');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+
+        // Logic
+        function init() {
+            userDisplay.innerText = `@${username.toUpperCase()}`;
+            renderSidebar();
+            selectTab(currentTab);
+            fetchData();
+            setInterval(fetchData, 400);
+
+            document.getElementById('open-sidebar').onclick = toggleSidebar;
+            sidebarOverlay.onclick = toggleSidebar;
+            
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.opacity = '0';
+                setTimeout(() => document.getElementById('loading-overlay').remove(), 500);
+            }, 800);
         }
 
-        // --- Data Handling ---
-        async function fetchData() {
-            try {
-                // Fetch current state
-                const stateRes = await fetch(`${API_BASE}/api/state/${username}`);
-                currentState = await stateRes.json();
-                
-                // Fetch schema if not already loaded
-                if(!menuSchema) {
-                    const schemaRes = await fetch(`${API_BASE}/api/schema/${username}`);
-                    menuSchema = await schemaRes.json();
-                    renderMenu();
-                } else {
-                    updateWidgetValues();
-                }
-                setStatus(true);
-            } catch (err) {
-                setStatus(false);
-            }
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
         }
 
-        async function updateValue(category, feature, value) {
-            try {
-                // Predictive update in UI
-                if(!currentState[category]) currentState[category] = {};
-                currentState[category][feature] = value;
-                
-                await fetch(`${API_BASE}/api/toggle`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, category, feature, value })
-                });
-            } catch (err) {
-                setStatus(false);
-            }
+        function renderSidebar() {
+            const container = document.getElementById('sidebar-items');
+            container.innerHTML = '';
+            
+            const tabs = menuSchema ? Object.keys(menuSchema) : Object.keys(fallbackSchema);
+            
+            tabs.forEach(tab => {
+                const item = document.createElement('div');
+                item.className = `sidebar-item ${tab === currentTab ? 'active' : ''}`;
+                item.innerHTML = `<span>${tab}</span>`;
+                item.onclick = () => {
+                    selectTab(tab);
+                    toggleSidebar();
+                };
+                container.appendChild(item);
+            });
         }
 
-        // --- Rendering ---
-        function renderMenu() {
+        function selectTab(tab) {
+            currentTab = tab;
+            currentSubTab = 0;
+            renderSidebar();
             renderTabs();
             renderTabContent();
         }
 
         function renderTabs() {
-            const list = document.getElementById('tab-list');
-            list.innerHTML = tabsInfo.map(t => `
-                <li class="nav-item ${currentTab === t.id ? 'active' : ''}" onclick="selectTab(${t.id})">
-                    <i class="fas ${t.icon}"></i> ${t.name}
-                </li>
-            `).join('');
-        }
+            const data = (menuSchema && menuSchema[currentTab]) || fallbackSchema[currentTab];
+            if(!data) return;
 
-        function selectTab(id) {
-            currentTab = id;
-            currentSubTab = 0;
-            document.getElementById('current-tab-name').innerText = tabsInfo[id].name;
-            document.querySelector('.tab-subtitle').innerText = tabsInfo[id].subtitle;
-            toggleMenu();
-            renderTabs();
-            renderTabContent();
+            subtabContainer.innerHTML = '';
+            data.subs.forEach((sub, index) => {
+                const btn = document.createElement('button');
+                btn.className = `subtab-btn ${index === currentSubTab ? 'active' : ''}`;
+                btn.innerText = sub;
+                btn.onclick = () => {
+                    currentSubTab = index;
+                    renderTabs();
+                    renderTabContent();
+                };
+                subtabContainer.appendChild(btn);
+            });
         }
 
         function renderTabContent() {
-            const container = document.getElementById('widgets-container');
-            const subtabsContainer = document.getElementById('sub-tabs-container');
-            
-            // Hardcoded schema mapping based on PC menu structure if schema is missing
-            const fallbackSchema = {
-                0: { // Assistência
-                    subs: ["Aimbot", "Silent", "Trigger"],
-                    groups: {
-                        0: [ // Aimbot
-                            { type: 'toggle', label: 'Ativar Aimbot', cat: 'Aimbot', key: 'Enabled' },
-                            { type: 'toggle', label: 'Mostrar FOV', cat: 'Aimbot', key: 'ShowFov' },
-                            { type: 'slider', label: 'FOV X', cat: 'Aimbot', key: 'FOVX', min: 0, max: 800 },
-                            { type: 'slider', label: 'FOV Y', cat: 'Aimbot', key: 'FOVY', min: 0, max: 800 },
-                            { type: 'slider', label: 'Suavização', cat: 'Aimbot', key: 'AimbotSpeed', min: 1, max: 12 }
-                        ],
-                        1: [ // Silent
-                            { type: 'toggle', label: 'Ativar Silent Aim', cat: 'SilentAim', key: 'Enabled' },
-                            { type: 'toggle', label: 'Balas Mágicas', cat: 'SilentAim', key: 'MagicBullets' },
-                            { type: 'toggle', label: 'Mostrar FOV', cat: 'SilentAim', key: 'ShowFov' }
-                        ],
-                        2: [ // Trigger
-                            { type: 'toggle', label: 'Ativar Triggerbot', cat: 'TriggerBot', key: 'Enabled' },
-                            { type: 'slider', label: 'Delay (ms)', cat: 'TriggerBot', key: 'Delay', min: 0, max: 500 }
-                        ]
-                    }
-                },
-                1: { // Visuals
-                    subs: ["Jogadores", "Veículos"],
-                    groups: {
-                        0: [
-                            { type: 'toggle', label: 'Ativar ESP', cat: 'ESP', key: 'Enabled' },
-                            { type: 'toggle', label: 'Caixa (ESP)', cat: 'ESP', key: 'Box' },
-                            { type: 'toggle', label: 'Nomes', cat: 'ESP', key: 'UserNames' },
-                            { type: 'toggle', label: 'Esqueleto', cat: 'ESP', key: 'Skeleton' },
-                            { type: 'toggle', label: 'Barra de Vida', cat: 'ESP', key: 'HealthBar' }
-                        ],
-                        1: [
-                            { type: 'toggle', label: 'Ativar Veículos', cat: 'VehicleESP', key: 'Enabled' },
-                            { type: 'toggle', label: 'Nomes', cat: 'VehicleESP', key: 'VehName' },
-                            { type: 'toggle', label: 'Distância', cat: 'VehicleESP', key: 'DistanceFromMe' }
-                        ]
-                    }
-                },
-                2: { // Jogador
-                    subs: ["Geral", "Veículo", "Ações"],
-                    groups: {
-                        0: [
-                            { type: 'toggle', label: 'GodMode', cat: 'Player', key: 'EnableGodMode' },
-                            { type: 'toggle', label: 'NoClip', cat: 'Player', key: 'NoClipEnabled' },
-                            { type: 'slider', label: 'Velocidade NoClip', cat: 'Player', key: 'NoClipSpeed', min: 1, max: 20 },
-                            { type: 'toggle', label: 'Invisibilidade', cat: 'Player', key: 'Invisible' },
-                            { type: 'toggle', label: 'Super Pulo', cat: 'Player', key: 'SuperJump' }
-                        ],
-                        1: [
-                            { type: 'toggle', label: 'GodMode Veículo', cat: 'Player', key: 'VehicleGodMode' },
-                            { type: 'toggle', label: 'Reparo Automático', cat: 'Player', key: 'AutoRepair' },
-                            { type: 'toggle', label: 'Cinto de Segurança', cat: 'Player', key: 'SeatBelt' }
-                        ],
-                        2: [
-                            { type: 'button', label: 'Curar Personagem', cat: 'Action', key: 'Heal', icon: 'fa-heart-pulse' },
-                            { type: 'button', label: 'Colocar Colete', cat: 'Action', key: 'Armor', icon: 'fa-shield-halved' },
-                            { type: 'button', label: 'Teleportar Waypoint', cat: 'Action', key: 'TpWaypoint', icon: 'fa-map-location' }
-                        ]
-                    }
-                }
-            };
-
-            const data = (menuSchema && menuSchema[currentTab]) ? menuSchema[currentTab] : fallbackSchema[currentTab];
-            
+            const data = (menuSchema && menuSchema[currentTab]) || fallbackSchema[currentTab];
             if(!data) {
-                container.innerHTML = `<p style="padding: 20px; color: var(--text-dim);">Aba em desenvolvimento...</p>`;
-                subtabsContainer.innerHTML = '';
+                contentArea.innerHTML = `<div class="card">Aba em desenvolvimento...</div>`;
                 return;
             }
 
-            // Render Subtabs
-            subtabsContainer.innerHTML = data.subs.map((s, i) => `
-                <button class="subtab-btn ${currentSubTab === i ? 'active' : ''}" onclick="selectSubTab(${i})">${s}</button>
-            `).join('');
-
-            // Render Widgets
             const widgets = data.groups[currentSubTab] || [];
-            container.innerHTML = `
+            contentArea.innerHTML = `
                 <div class="card">
                     <div class="card-header">${data.subs[currentSubTab]}</div>
                     ${widgets.map(w => renderWidget(w)).join('')}
                 </div>
             `;
             
-            updateWidgetValues();
-        }
-
-        function selectSubTab(i) {
-            currentSubTab = i;
-            renderTabContent();
+            // Re-sync values immediately without flashing
+            updateWidgetValues(true);
         }
 
         function renderWidget(w) {
-            const id = `${w.cat}_${w.key}`;
             if(w.type === 'toggle') {
                 return `
                     <div class="widget-row">
-                        <div class="widget-label">
-                            <span>${w.label}</span>
-                            <span>Sincronizado</span>
+                        <div class="widget-info">
+                            <div class="widget-label">${w.label}</div>
                         </div>
                         <label class="switch">
-                            <input type="checkbox" id="${id}" onchange="updateValue('${w.cat}', '${w.key}', this.checked)">
-                            <span class="slider"></span>
+                            <input type="checkbox" id="${w.id}" onchange="updateValue('${w.cat}', '${w.feat}', this.checked)">
+                            <span class="slider-cap"></span>
                         </label>
                     </div>
                 `;
             } else if(w.type === 'slider') {
                 return `
-                    <div class="card" style="padding: 15px 0; background: none; border: none; margin-bottom: 0;">
-                        <div class="widget-row" style="border: none;">
-                            <div class="widget-label"><span>${w.label}</span></div>
-                            <span class="range-value" id="${id}_val">0</span>
+                    <div class="widget-row" style="flex-direction: column; align-items: flex-start;">
+                        <div style="display:flex; justify-content:space-between; width:100%;">
+                            <div class="widget-label">${w.label}</div>
+                            <div class="widget-label" id="val_${w.id}" style="color: var(--accent-color)">0</div>
                         </div>
-                        <div class="range-container">
-                            <input type="range" id="${id}" min="${w.min}" max="${w.max}" step="${w.step || 1}" 
-                                oninput="document.getElementById('${id}_val').innerText = this.value"
-                                onchange="updateValue('${w.cat}', '${w.key}', parseFloat(this.value))">
+                        <div class="slider-container">
+                            <input type="range" class="range-slider" id="${w.id}" 
+                                min="${w.min}" max="${w.max}" step="${w.step || 1}"
+                                oninput="document.getElementById('val_${w.id}').innerText = this.value"
+                                onchange="updateValue('${w.cat}', '${w.feat}', parseFloat(this.value))">
                         </div>
                     </div>
                 `;
             } else if(w.type === 'button') {
                 return `
-                    <div class="widget-row" onclick="updateValue('${w.cat}', '${w.key}', true)">
-                        <div class="widget-label"><span>${w.label}</span></div>
-                        <i class="fas ${w.icon}" style="color: var(--accent);"></i>
+                    <div class="widget-row">
+                        <button class="btn-action" onclick="sendCommand('Action', '${w.feat}')">${w.label}</button>
                     </div>
                 `;
             }
             return '';
         }
 
-        function updateWidgetValues() {
+        async function fetchData() {
+            try {
+                const res = await fetch(`${API_BASE}/api/state/${username}`);
+                if(!res.ok) throw new Error();
+                
+                currentState = await res.json();
+                setStatus(true);
+
+                // Otimizado: Só atualiza os widgets se os valores mudarem
+                updateWidgetValues();
+                
+            } catch (e) {
+                setStatus(false);
+            }
+        }
+
+        function updateWidgetValues(force = false) {
             for (const cat in currentState) {
+                if(cat === '_last_sync') continue;
                 for (const feature in currentState[cat]) {
-                    const el = document.getElementById(`${cat}_${feature}`);
-                    const valEl = document.getElementById(`${cat}_${feature}_val`);
+                    const id = `${cat}_${feature}`;
+                    const val = currentState[cat][feature];
+                    
+                    // Pular se for igual ao último valor (Evita o FLASH)
+                    if(!force && lastWidgetValues[id] === val) continue;
+                    lastWidgetValues[id] = val;
+
+                    const el = document.getElementById(id);
                     if(el) {
-                        if(el.type === 'checkbox') el.checked = currentState[cat][feature];
+                        if(el.type === 'checkbox') el.checked = val;
                         else {
-                            el.value = currentState[cat][feature];
-                            if(valEl) valEl.innerText = el.value;
+                            el.value = val;
+                            const valEl = document.getElementById(`val_${id}`);
+                            if(valEl) valEl.innerText = val;
                         }
                     }
                 }
             }
         }
 
-        window.onload = () => {
-            fetchData();
-            setInterval(fetchData, 400); // Polling fast enough
-        };
+        async function updateValue(category, feature, value) {
+            // Atualização Otimista
+            lastWidgetValues[`${category}_${feature}`] = value;
+            
+            try {
+                await fetch(`${API_BASE}/api/command/${username}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, feature, value })
+                });
+            } catch (e) {}
+        }
 
+        async function sendCommand(category, feature) {
+            try {
+                await fetch(`${API_BASE}/api/command/${username}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, feature, value: true })
+                });
+            } catch (e) {}
+        }
+
+        function setStatus(online) {
+            if(online) {
+                statusDot.className = 'status-dot online';
+                statusText.innerText = 'Sincronizado';
+                statusText.classList.remove('syncing');
+            } else {
+                statusDot.className = 'status-dot offline';
+                statusText.innerText = 'Buscando PC...';
+                statusText.classList.add('syncing');
+            }
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
-
