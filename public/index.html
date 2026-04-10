@@ -331,9 +331,10 @@
                 subs: ["Início", "Configurações"],
                 groups: [
                     [
+                        { id: "Action_ExecuteInject", label: "Executar Injeção (.exe)", type: "button", feat: "ExecuteInject" },
+                        { id: "Injector_Status", label: "Status do Injetor", type: "text", cat: "Injector", feat: "Status" },
                         { id: "Action_ToggleMenu", label: "Abrir/Fechar Menu no PC", type: "button", feat: "ToggleMenu" },
-                        { id: "Action_Heal", label: "Auto-Curar (Reviver)", type: "button", feat: "Heal" },
-                        { id: "Action_Armor", label: "Reparar Colete", type: "button", feat: "Armor" }
+                        { id: "Action_Heal", label: "Auto-Curar (Reviver)", type: "button", feat: "Heal" }
                     ],
                     [
                         { id: "General_ArrayList", label: "Lista de Espectadores", type: "toggle", cat: "General", feat: "ArrayList" }
@@ -565,6 +566,15 @@
                         <button class="btn-action" onclick="sendCommand('Action', '${w.feat}')">${w.label}</button>
                     </div>
                 `;
+            } else if(w.type === 'text') {
+                return `
+                    <div class="widget-row">
+                        <div class="widget-info">
+                            <div class="widget-label" style="color: var(--text-dim)">${w.label}</div>
+                            <div class="widget-label" id="${w.id}" style="color: var(--accent-color); font-weight: 800; margin-top: 5px;">Aguardando...</div>
+                        </div>
+                    </div>
+                `;
             }
             return '';
         }
@@ -599,10 +609,14 @@
                     const el = document.getElementById(id);
                     if(el) {
                         if(el.type === 'checkbox') el.checked = val;
-                        else {
+                        else if(el.tagName === 'INPUT') {
                             el.value = val;
                             const valEl = document.getElementById(`val_${id}`);
                             if(valEl) valEl.innerText = val;
+                        }
+                        else {
+                            // Para o tipo 'text' (div)
+                            el.innerText = val;
                         }
                     }
                 }
