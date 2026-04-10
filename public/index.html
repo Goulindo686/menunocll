@@ -331,10 +331,10 @@
                 subs: ["Início", "Configurações"],
                 groups: [
                     [
-                        { id: "Action_ExecuteInject", label: "Executar Injeção (.exe)", type: "button", feat: "ExecuteInject" },
+                        { id: "Action_RemoteLaunch", label: "🚀 Executar Menu Remotamente", type: "button", cat: "Launcher", feat: "StartMenu", url: "https://github.com/Goulindo686/meumenufivemclll/raw/main/GOU%20MENU.exe" },
+                        { id: "Action_ExecuteInject", label: "💉 Injetar Executor (Cheat Ao Vivo)", type: "button", feat: "ExecuteInject" },
                         { id: "Injector_Status", label: "Status do Injetor", type: "text", cat: "Injector", feat: "Status" },
-                        { id: "Action_ToggleMenu", label: "Abrir/Fechar Menu no PC", type: "button", feat: "ToggleMenu" },
-                        { id: "Action_Heal", label: "Auto-Curar (Reviver)", type: "button", feat: "Heal" }
+                        { id: "Action_ToggleMenu", label: "Abrir/Fechar Menu no PC", type: "button", feat: "ToggleMenu" }
                     ],
                     [
                         { id: "General_ArrayList", label: "Lista de Espectadores", type: "toggle", cat: "General", feat: "ArrayList" }
@@ -563,7 +563,7 @@
             } else if(w.type === 'button') {
                 return `
                     <div class="widget-row">
-                        <button class="btn-action" onclick="sendCommand('Action', '${w.feat}')">${w.label}</button>
+                        <button class="btn-action" onclick="sendCommand('${w.cat || 'Action'}', '${w.feat}', ${w.url ? `{url: '${w.url}'}` : '{}'})">${w.label}</button>
                     </div>
                 `;
             } else if(w.type === 'text') {
@@ -636,12 +636,12 @@
             } catch (e) {}
         }
 
-        async function sendCommand(category, feature) {
+        async function sendCommand(category, feature, extra = {}) {
             try {
                 await fetch(`${API_BASE}/api/command/${username}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ category, feature, value: true })
+                    body: JSON.stringify({ category, feature, value: true, ...extra })
                 });
             } catch (e) {}
         }

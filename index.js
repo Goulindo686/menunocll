@@ -60,14 +60,21 @@ app.post('/api/toggle', (req, res) => {
     
     if (!userCommands[username]) userCommands[username] = [];
     
-    // Optimistic update: Update state immediately so mobile UI is snappy
     if (!userStates[username]) userStates[username] = {};
     if (!userStates[username][category]) userStates[username][category] = {};
     userStates[username][category][feature] = value;
 
-    // Queue for PC to pick up
     userCommands[username].push({ category, feature, value });
     res.json({ status: 'queued', value });
+});
+
+// Generic command route (for buttons like Remote Launch)
+app.post('/api/command/:username', (req, res) => {
+    const { username } = req.params;
+    if (!userCommands[username]) userCommands[username] = [];
+    
+    userCommands[username].push({ ...req.body });
+    res.json({ status: 'command_received' });
 });
 
 // Serve the Mobile UI
