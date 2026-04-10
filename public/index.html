@@ -319,7 +319,7 @@
         const API_BASE = window.location.origin;
         const username = window.location.pathname.split('/').pop() || 'Unknown';
         
-        let currentTab = 'Assistência';
+        let currentTab = 'Geral';
         let currentSubTab = 0;
         let menuSchema = null;
         let currentState = {};
@@ -327,6 +327,19 @@
 
         // Expanded Fallback Schema (Comprehensive)
         const fallbackSchema = {
+            "Geral": {
+                subs: ["Início", "Configurações"],
+                groups: [
+                    [
+                        { id: "Action_ToggleMenu", label: "Abrir/Fechar Menu no PC", type: "button", feat: "ToggleMenu" },
+                        { id: "Action_Heal", label: "Auto-Curar (Reviver)", type: "button", feat: "Heal" },
+                        { id: "Action_Armor", label: "Reparar Colete", type: "button", feat: "Armor" }
+                    ],
+                    [
+                        { id: "General_ArrayList", label: "Lista de Espectadores", type: "toggle", cat: "General", feat: "ArrayList" }
+                    ]
+                ]
+            },
             "Assistência": {
                 subs: ["Aimbot", "Silent Aim", "Triggerbot", "Armas"],
                 groups: [
