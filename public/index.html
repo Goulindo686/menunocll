@@ -323,7 +323,8 @@
         let currentSubTab = 0;
         let menuSchema = null;
         let currentState = {};
-        let lastWidgetValues = {}; // Para evitar flashes / redrender desnecessário
+        let lastWidgetValues = {};
+        const lockedWidgets = new Map(); // Anti-Flicker: impede que o servidor sobrescreva cliques recentes
 
         // Expanded Fallback Schema (Comprehensive)
         const fallbackSchema = {
@@ -453,7 +454,7 @@
             renderSidebar();
             selectTab(currentTab);
             fetchData();
-            setInterval(fetchData, 400);
+            setInterval(fetchData, 200); // Polling mais rápido (200ms)
 
             document.getElementById('open-sidebar').onclick = toggleSidebar;
             sidebarOverlay.onclick = toggleSidebar;
@@ -602,7 +603,13 @@
                     const id = `${cat}_${feature}`;
                     const val = currentState[cat][feature];
                     
-                    // Pular se for igual ao último valor (Evita o FLASH)
+                    // ANTI-FLICKER: Se o usuário mexeu recentemente, ignore o valor do servidor por 2.5s
+                    const lockTime = lockedWidgets.get(id);
+                    if (lockTime) {
+                        if (Date.now() - lockTime < 2500) continue;
+                        else lockedWidgets.delete(id);
+                    }
+
                     if(!force && lastWidgetValues[id] === val) continue;
                     lastWidgetValues[id] = val;
 
@@ -624,8 +631,11 @@
         }
 
         async function updateValue(category, feature, value) {
-            // Atualização Otimista
-            lastWidgetValues[`${category}_${feature}`] = value;
+            const id = `${category}_${feature}`;
+            
+            // Bloqueia atualização vinda do PC por 2.5s para garantir que o comando seja processado
+            lockedWidgets.set(id, Date.now());
+            lastWidgetValues[id] = value;
             
             try {
                 await fetch(`${API_BASE}/api/command/${username}`, {
